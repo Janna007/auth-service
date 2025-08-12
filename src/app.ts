@@ -5,7 +5,7 @@ import { HttpError } from 'http-errors-enhanced'
 const app = express()
 
 app.get('/', (req, res) => {
-    res.sendStatus(401)
+    res.sendStatus(200)
 })
 
 //global error handler
