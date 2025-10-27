@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 import logger from './config/logger'
 import { HttpError } from 'http-errors-enhanced'
+import authRouter from './routes/auth'
 
 const app = express()
 
@@ -8,6 +9,7 @@ app.get('/', (req, res) => {
     res.sendStatus(200)
 })
 
+app.use('/auth', authRouter)
 //global error handler
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
