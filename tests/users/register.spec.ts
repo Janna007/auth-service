@@ -37,5 +37,21 @@ describe('POST /auth/register', () => {
                 expect.stringContaining('json'),
             )
         })
+
+        //test case 3
+
+        // it("it should persist the user in the database",async()=>{
+        //     const userData = {
+        //         name: 'janna',
+        //         username: 'jk',
+        //         email: 'jannakondeth5@gmail.com',
+        //         password: 'janna123',
+        //     }
+
+        //     const response = await request(app)
+        //         .post('/auth/register')
+        //         .send(userData)
+
+        // })
     })
 })
