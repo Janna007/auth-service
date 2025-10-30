@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
     database: Config.DB_NAME ?? '',
 
     //dont use in production
-    synchronize: Config.NODE_ENV === 'dev' || Config.NODE_ENV === 'test',
+    synchronize: false,
     logging: false,
     entities: [User],
     migrations: [],

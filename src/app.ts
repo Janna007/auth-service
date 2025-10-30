@@ -2,8 +2,8 @@ import 'reflect-metadata'
 
 import express, { NextFunction, Request, Response } from 'express'
 import logger from './config/logger'
-import { HttpError } from 'http-errors-enhanced'
 import authRouter from './routes/auth'
+import { HttpError } from 'http-errors'
 
 const app = express()
 

@@ -25,6 +25,13 @@ const logger = winston.createLogger({
             format: combine(timestamp(), json()),
             silent: Config.NODE_ENV === 'test',
         }),
+        new winston.transports.File({
+            dirname: 'logs',
+            filename: 'debug.log',
+            level: 'debug',
+            format: combine(timestamp(), json()),
+            silent: Config.NODE_ENV === 'test',
+        }),
     ],
 })
 
