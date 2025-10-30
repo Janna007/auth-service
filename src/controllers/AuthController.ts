@@ -1,5 +1,21 @@
-import { Request, Response } from 'express'
+import { Response } from 'express'
+import { RequestRegisterUser } from '../types'
+import { UserService } from '../services/UserService'
 
-export const registerUser = (req: Request, res: Response) => {
-    res.status(201).json()
+export class AuthController {
+    userService: UserService
+
+    constructor(userService: UserService) {
+        this.userService = userService
+    }
+    async userRegister(req: RequestRegisterUser, res: Response) {
+        const { firstName, lastName, email, password } = req.body
+        await this.userService.createUser({
+            firstName,
+            lastName,
+            email,
+            password,
+        })
+        res.status(201).json()
+    }
 }
