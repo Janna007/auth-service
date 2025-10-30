@@ -81,5 +81,28 @@ describe('POST /auth/register', () => {
             expect(users[0]?.lastName).toBe(userData.lastName)
             expect(users[0]?.email).toBe(userData.email)
         })
+
+        //test case4
+
+        it('should return the id of new created user', async () => {
+            const userData = {
+                firstName: 'janna',
+                lastName: 'jk',
+                email: 'jannakondeth5@gmail.com',
+                password: 'janna123',
+            }
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+            // console.log("response would be:", response)
+            expect(response.body).toHaveProperty('id')
+            const userRepository = dataSource.getRepository(User)
+            // console.log(userRepository)
+            const users = await userRepository.find()
+
+            expect((response.body as Record<string, string>).id).toBe(
+                users[0]?.id,
+            )
+        })
     })
 })

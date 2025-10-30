@@ -10,12 +10,13 @@ export class AuthController {
     }
     async userRegister(req: RequestRegisterUser, res: Response) {
         const { firstName, lastName, email, password } = req.body
-        await this.userService.createUser({
+        const userCreated = await this.userService.createUser({
             firstName,
             lastName,
             email,
             password,
         })
-        res.status(201).json()
+        // console.log("user created:",userCreated)
+        res.status(201).json({ id: userCreated.id })
     }
 }
