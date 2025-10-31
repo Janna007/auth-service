@@ -117,7 +117,7 @@ describe('POST /auth/register', () => {
             }
             await request(app).post('/auth/register').send(userData)
 
-            const userRepository = AppDataSource.getRepository(User)
+            const userRepository = dataSource.getRepository(User)
             const users = await userRepository.find()
 
             expect(users[0]).toHaveProperty('role')
@@ -136,12 +136,31 @@ describe('POST /auth/register', () => {
 
             await request(app).post('/auth/register').send(userData)
 
-            const userRepository = AppDataSource.getRepository(User)
+            const userRepository = dataSource.getRepository(User)
             const users = await userRepository.find()
 
             expect(users[0]?.password).not.toBe(userData.password)
             expect(users[0]?.password).toHaveLength(60)
             expect(users[0]?.password).toMatch(/^\$2b\$\d+\$/)
+        })
+
+        it('should return 400 if the email is already exist', async () => {
+            const userData = {
+                firstName: 'janna',
+                lastName: 'jk',
+                email: 'jannakondeth5@gmail.com',
+                password: 'janna123',
+            }
+
+            const userRepository = dataSource.getRepository(User)
+            await userRepository.save({ ...userData, role: roles.CUSTOMER })
+
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+            expect(response.status).toBe(400)
+            const users = await userRepository.find()
+            expect(users).toHaveLength(1)
         })
     })
 })
