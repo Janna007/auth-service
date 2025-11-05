@@ -15,6 +15,15 @@ export interface userResponse {
     password: string
 }
 
+export interface LoginUserData {
+    email: string
+    password: string
+}
+
 export interface RequestRegisterUser extends Request {
     body: UserData
+}
+
+export interface RequestLoginUser extends Request {
+    body: LoginUserData
 }

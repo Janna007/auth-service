@@ -1,16 +1,19 @@
 import { NextFunction, Response } from 'express'
-import { RequestRegisterUser } from '../types'
+import { RequestLoginUser, RequestRegisterUser } from '../types'
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
 import { validationResult } from 'express-validator'
 import { JwtPayload } from 'jsonwebtoken'
 import { TokenService } from '../services/TokenService'
+import { CredentialService } from '../services/CredentialService'
+import createHttpError from 'http-errors'
 
 export class AuthController {
     constructor(
         private userService: UserService,
         private logger: Logger,
         private tokenService: TokenService,
+        private credentialService: CredentialService,
     ) {
         this.userService = userService
     }
@@ -81,6 +84,93 @@ export class AuthController {
             })
 
             res.status(201).json({ id: userCreated.id })
+        } catch (error) {
+            next(error)
+            return
+        }
+    }
+
+    async loginUser(req: RequestLoginUser, res: Response, next: NextFunction) {
+        //field validation
+        const result = validationResult(req)
+        // console.log("validation result",result)
+        if (!result.isEmpty()) {
+            return res.status(400).json({ errors: result.array() })
+        }
+
+        const { email, password } = req.body
+
+        this.logger.debug('data recieved from request body', {
+            email,
+            password: '****',
+        })
+        try {
+            //email verify
+
+            const user = await this.credentialService.findUserByEmail(email)
+
+            if (!user) {
+                const err = createHttpError(
+                    400,
+                    'Incorrect Email or Password!!Please try again with another email or password',
+                )
+                next(err)
+                return
+            }
+
+            //verify password
+
+            const matchedPassword = await this.credentialService.verifyPassword(
+                password,
+                user.password,
+            )
+
+            if (!matchedPassword) {
+                const err = createHttpError(
+                    400,
+                    'Incorrect Email or Password!!Please try again with another email or password',
+                )
+                next(err)
+                return
+            }
+
+            //create access token
+
+            const payload: JwtPayload = {
+                sub: String(user.id),
+                role: user.role,
+            }
+
+            const accessToken = this.tokenService.generateAccessToken(payload)
+            // create refreshtoken
+            // console.log("newRefreshToken",newRefreshToken)
+            const newRefreshToken =
+                await this.tokenService.createRefreshToken(user)
+
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: newRefreshToken.id,
+            })
+
+            //  //responses
+
+            res.cookie('access_token', accessToken, {
+                httpOnly: true,
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60, //1 hour
+            })
+
+            res.cookie('refresh_token', refreshToken, {
+                httpOnly: true,
+                domain: 'localhost',
+                sameSite: 'strict',
+                maxAge: 1000 * 60 * 60 * 24 * 365, //1 year
+            })
+
+            this.logger.info('logged in succesfully', { id: user.id })
+
+            res.status(201).json({ id: user.id })
         } catch (error) {
             next(error)
             return
