@@ -5,6 +5,7 @@ import { User } from '../../src/entity/User'
 import { DataSource } from 'typeorm'
 import { roles } from '../../src/constants'
 import { isJwt } from '../utils'
+import { RefreshToken } from '../../src/entity/RefreshToken'
 
 describe('POST /auth/register', () => {
     let dataSource: DataSource
@@ -207,6 +208,38 @@ describe('POST /auth/register', () => {
 
             expect(isJwt(accessToken)).toBeTruthy()
             expect(isJwt(refreshToken)).toBeTruthy()
+        })
+
+        it('should store refresh token in database', async () => {
+            const userData = {
+                firstName: 'janna',
+                lastName: 'jk',
+                email: 'jannakondeth5@gmail.com',
+                password: 'janna123',
+            }
+
+            const response = await request(app)
+                .post('/auth/register')
+                .send(userData)
+
+            const refreshTokenRepo = dataSource.getRepository(RefreshToken)
+            // let refreshToken=await refreshTokenRepo.find({
+            //     relations:{
+            //         user:true
+            //     }
+            // })
+            // expect(refreshToken[0]?.user?.id).toBe(response?.body?.id)
+
+            const refreshToken = await refreshTokenRepo
+                .createQueryBuilder('refreshToken')
+                .where('refreshToken.userId = :userId', {
+                    userId: (response.body as Record<string, string>).id,
+                })
+                .getMany()
+
+            // console.log("testrefresh",refreshToken)
+
+            expect(refreshToken).toHaveLength(1)
         })
     })
 

@@ -1,18 +1,16 @@
-import fs from 'fs'
 import { NextFunction, Response } from 'express'
 import { RequestRegisterUser } from '../types'
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
 import { validationResult } from 'express-validator'
-import { JwtPayload, sign } from 'jsonwebtoken'
-import path from 'path'
-import createHttpError from 'http-errors'
-import { Config } from '../config'
+import { JwtPayload } from 'jsonwebtoken'
+import { TokenService } from '../services/TokenService'
 
 export class AuthController {
     constructor(
         private userService: UserService,
         private logger: Logger,
+        private tokenService: TokenService,
     ) {
         this.userService = userService
     }
@@ -48,37 +46,25 @@ export class AuthController {
                 id: userCreated.id,
             })
 
-            //create tokens
-            let privateKey: Buffer
-            try {
-                privateKey = fs.readFileSync(
-                    path.join(__dirname, '../../certs/private.pem'),
-                )
-            } catch {
-                const err = createHttpError(
-                    500,
-                    'error while reading private key',
-                )
-                next(err)
-                return
-            }
+            //create access token
 
             const payload: JwtPayload = {
                 sub: String(userCreated.id),
                 role: userCreated.role,
             }
 
-            const accessToken = sign(payload, privateKey, {
-                algorithm: 'RS256',
-                expiresIn: '1hr',
-                issuer: 'auth-service',
+            const accessToken = this.tokenService.generateAccessToken(payload)
+            // create refreshtoken
+            // console.log("newRefreshToken",newRefreshToken)
+            const newRefreshToken =
+                await this.tokenService.createRefreshToken(userCreated)
+
+            const refreshToken = this.tokenService.generateRefreshToken({
+                ...payload,
+                id: newRefreshToken.id,
             })
 
-            const refreshToken = sign(payload, Config.REFRESH_TOKEN_SECRET!, {
-                algorithm: 'HS256',
-                expiresIn: '1y',
-                issuer: 'auth-service',
-            })
+            //responses
 
             res.cookie('access_token', accessToken, {
                 httpOnly: true,

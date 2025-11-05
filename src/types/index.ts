@@ -7,6 +7,14 @@ export interface UserData {
     password: string
 }
 
+export interface userResponse {
+    id: number
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+}
+
 export interface RequestRegisterUser extends Request {
     body: UserData
 }
