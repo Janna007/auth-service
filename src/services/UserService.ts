@@ -34,4 +34,16 @@ export class UserService {
             throw error
         }
     }
+
+    async findUserById(id: number) {
+        try {
+            return await this.userRepository.findOne({ where: { id } })
+        } catch {
+            const err = createHttpError(
+                500,
+                'unable to find user ,server error',
+            )
+            throw err
+        }
+    }
 }

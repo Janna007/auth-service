@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express'
-import { RequestLoginUser, RequestRegisterUser } from '../types'
+import { AuthUser, RequestLoginUser, RequestRegisterUser } from '../types'
 import { UserService } from '../services/UserService'
 import { Logger } from 'winston'
 import { validationResult } from 'express-validator'
@@ -170,10 +170,17 @@ export class AuthController {
 
             this.logger.info('logged in succesfully', { id: user.id })
 
-            res.status(201).json({ id: user.id })
+            res.json({ id: user.id })
         } catch (error) {
             next(error)
             return
         }
+    }
+
+    async getUser(req: AuthUser, res: Response) {
+        console.log(req.auth)
+        const user = await this.userService.findUserById(req.auth.sub)
+        console.log(user)
+        res.json(user)
     }
 }

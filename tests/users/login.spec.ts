@@ -26,7 +26,7 @@ describe('POST /auth/login', () => {
     })
 
     describe('All fields are given ', () => {
-        it('should return 201 status code ', async () => {
+        it('should return 200 status code ', async () => {
             const registeruserData = {
                 firstName: 'janna',
                 lastName: 'jk',
@@ -45,7 +45,7 @@ describe('POST /auth/login', () => {
                 .post('/auth/login')
                 .send(userData)
 
-            expect(response.statusCode).toBe(201)
+            expect(response.statusCode).toBe(200)
         })
 
         it('should return 400 if user with that email is not exist', async () => {

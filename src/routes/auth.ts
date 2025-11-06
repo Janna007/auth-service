@@ -9,6 +9,8 @@ import { RefreshToken } from '../entity/RefreshToken'
 import { TokenService } from '../services/TokenService'
 import loginValidator from '../validators/login-validator'
 import { CredentialService } from '../services/CredentialService'
+import authenticate from '../middlewares/authenticate'
+import { AuthUser } from '../types'
 
 const router = express.Router()
 
@@ -35,6 +37,10 @@ router.post(
     loginValidator,
     (req: Request, res: Response, next: NextFunction) =>
         authController.loginUser(req, res, next),
+)
+
+router.get('/self', authenticate, (req: Request, res: Response) =>
+    authController.getUser(req as AuthUser, res),
 )
 
 export default router

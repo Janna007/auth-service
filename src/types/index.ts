@@ -27,3 +27,13 @@ export interface RequestRegisterUser extends Request {
 export interface RequestLoginUser extends Request {
     body: LoginUserData
 }
+export interface AuthUser extends Request {
+    auth: {
+        sub: number
+        role: string
+    }
+}
+
+export type AuthCookie = {
+    access_token: string
+}
