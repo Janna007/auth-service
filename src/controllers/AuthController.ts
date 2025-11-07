@@ -244,4 +244,24 @@ export class AuthController {
         this.logger.info('token refreshed succesfully', { id: user.id })
         res.json({ id: user.id })
     }
+
+    async logout(req: AuthUser, res: Response, next: NextFunction) {
+        try {
+            //require token id and remove from db
+            const tokenId = req.auth.id
+            const tokenRemoved = await this.tokenService.deleteRefreshToken(
+                Number(tokenId),
+            )
+            this.logger.info('token removed', { tokenRemoved: tokenRemoved })
+
+            //clear cookies
+            res.clearCookie('access_token')
+            res.clearCookie('refresh_token')
+
+            res.json({ message: 'succesfully logged out' })
+        } catch (error) {
+            next(error)
+            return
+        }
+    }
 }
