@@ -37,7 +37,10 @@ export class UserService {
 
     async findUserById(id: number) {
         try {
-            return await this.userRepository.findOne({ where: { id } })
+            return await this.userRepository.findOne({
+                where: { id },
+                select: ['email', 'firstName', 'id', 'lastName', 'role'],
+            })
         } catch {
             const err = createHttpError(
                 500,

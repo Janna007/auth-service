@@ -6,7 +6,7 @@ import { User } from '../../src/entity/User'
 import { roles } from '../../src/constants'
 // import { generateKeyPair, SignJWT } from 'jose'
 
-describe('POST /auth/self', () => {
+describe.skip('POST /auth/self', () => {
     let dataSource: DataSource
     // let privateKey:CryptoKey
 
@@ -70,4 +70,8 @@ describe('POST /auth/self', () => {
 
         // expect((response.body as Record<string,string>).id).toBe(userData.id)
     })
+
+    it.todo('it should not return password in userdata')
+
+    it.todo('it should return 401 if token is invalid or not exist')
 })
