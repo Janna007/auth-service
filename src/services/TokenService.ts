@@ -58,4 +58,20 @@ export class TokenService {
             throw error
         }
     }
+
+    async deleteRefreshToken(tokenId: number) {
+        try {
+            const tokenToRemove = await this.tokenRepository.find({
+                where: { id: tokenId },
+            })
+            const removed = this.tokenRepository.remove(tokenToRemove)
+            return removed
+        } catch {
+            const error = createHttpError(
+                500,
+                'Error while removing refreshToken from the database',
+            )
+            throw error
+        }
+    }
 }

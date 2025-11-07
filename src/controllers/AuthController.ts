@@ -177,10 +177,71 @@ export class AuthController {
         }
     }
 
-    async getUser(req: AuthUser, res: Response) {
-        console.log(req.auth)
-        const user = await this.userService.findUserById(req.auth.sub)
-        console.log(user)
-        res.json(user)
+    async getUser(req: AuthUser, res: Response, next: NextFunction) {
+        try {
+            console.log(req.auth)
+            const user = await this.userService.findUserById(
+                Number(req.auth.sub),
+            )
+            console.log(user)
+            res.json(user)
+        } catch (error) {
+            next(error)
+            return
+        }
+    }
+
+    async refresh(req: AuthUser, res: Response, next: NextFunction) {
+        //user id is required
+        const userId = req.auth.sub
+
+        const user = await this.userService.findUserById(Number(userId))
+
+        if (!user) {
+            const err = createHttpError(401, 'User with this id is not found')
+            next(err)
+            return
+        }
+
+        //new access token generation
+        const payload: JwtPayload = {
+            sub: String(user.id),
+            role: user.role,
+        }
+
+        const accessToken = this.tokenService.generateAccessToken(payload)
+
+        //new refresh token generation
+
+        const newRefreshToken = await this.tokenService.createRefreshToken(user)
+
+        const refreshToken = this.tokenService.generateRefreshToken({
+            ...payload,
+            id: newRefreshToken.id,
+        })
+
+        //delete  old refresh from db
+        const tokenRemoved = await this.tokenService.deleteRefreshToken(
+            Number(req.auth.id),
+        )
+        this.logger.info('token removed', { tokenRemoved: tokenRemoved })
+        //send to user
+
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            domain: 'localhost',
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60, //1 hour
+        })
+
+        res.cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            domain: 'localhost',
+            sameSite: 'strict',
+            maxAge: 1000 * 60 * 60 * 24 * 365, //1 year
+        })
+
+        this.logger.info('token refreshed succesfully', { id: user.id })
+        res.json({ id: user.id })
     }
 }
