@@ -9,7 +9,6 @@ const startServer = async () => {
     try {
         await AppDataSource.initialize()
         logger.info('Database connected successfully')
-        console.log(AppDataSource.entityMetadatas.map((m) => m.name))
         app.listen(PORT, () => {
             logger.info('Server is running on port', { port: PORT })
         })
