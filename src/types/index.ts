@@ -49,6 +49,15 @@ export interface createTenantData {
     address: string
 }
 
+export interface updateTenantData {
+    name?: string
+    address?: string
+}
+
+export interface RequestUpdateTenant extends Request {
+    body: updateTenantData
+}
+
 export interface RequestCreateTenant extends Request {
     body: createTenantData
 }

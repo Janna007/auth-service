@@ -23,12 +23,37 @@ router.post(
         tenantController.createTenant(req, res, next),
 )
 
+router.patch(
+    '/update/:id',
+    authenticate,
+    canAccess([roles.ADMIN]),
+    tenantCreateValidator,
+    (req: Request, res: Response, next: NextFunction) =>
+        tenantController.updateTenant(req, res, next),
+)
+
 router.get(
     '/all-tenants',
     authenticate,
     canAccess([roles.ADMIN]),
     (req: Request, res: Response, next: NextFunction) =>
         tenantController.getAllTenants(req, res, next),
+)
+
+router.get(
+    '/:id',
+    authenticate,
+    canAccess([roles.ADMIN]),
+    (req: Request, res: Response, next: NextFunction) =>
+        tenantController.getTenant(req, res, next),
+)
+
+router.delete(
+    '/delete/:id',
+    authenticate,
+    canAccess([roles.ADMIN]),
+    (req: Request, res: Response, next: NextFunction) =>
+        tenantController.deleteTenant(req, res, next),
 )
 
 export default router
