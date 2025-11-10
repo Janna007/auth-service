@@ -19,3 +19,4 @@ const startServer = async () => {
 }
 
 void startServer()
+export default startServer
