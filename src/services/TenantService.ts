@@ -14,4 +14,17 @@ export class TenantService {
             throw error
         }
     }
+
+    async getAllTenants() {
+        try {
+            const tenants = await this.tenantRepository.find()
+            return tenants
+        } catch {
+            const error = createHttpError(
+                500,
+                'Error while fetching tenant data',
+            )
+            throw error
+        }
+    }
 }
