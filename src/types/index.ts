@@ -43,3 +43,12 @@ export type AuthCookie = {
 export interface IRefreshToken {
     id: string
 }
+
+export interface createTenantData {
+    name: string
+    address: string
+}
+
+export interface RequestCreateTenant extends Request {
+    body: createTenantData
+}
