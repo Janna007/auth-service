@@ -27,9 +27,17 @@ export class TenantService {
         }
     }
 
-    async getAllTenants() {
+    async getAllTenants(page: number, perPage: number) {
         try {
-            const tenants = await this.tenantRepository.findAndCount()
+            // const tenants = await this.tenantRepository.findAndCount()
+            const tenants = await this.tenantRepository
+                .createQueryBuilder('tenant')
+                .orderBy('tenant.id')
+                .skip((page - 1) * perPage)
+                .take(perPage)
+                .getManyAndCount()
+
+            console.log('tenants', tenants)
             return tenants
         } catch {
             const error = createHttpError(

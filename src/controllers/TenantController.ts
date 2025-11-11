@@ -53,12 +53,16 @@ export class TenantController {
 
     async getAllTenants(req: Request, res: Response, next: NextFunction) {
         try {
-            //TODO:  add pagination
-            const tenants = await this.tenantService.getAllTenants()
-            return res.json({
-                tenants: tenants[0],
-                count: tenants[1],
-            })
+            //add query validation
+            //TODO: add search functionality/filtering
+            const page = req.query.page || 1
+            const perPage = req.query.perPage || 200
+
+            const tenants = await this.tenantService.getAllTenants(
+                Number(page),
+                Number(perPage),
+            )
+            return res.json(tenants)
         } catch (error) {
             next(error)
         }
