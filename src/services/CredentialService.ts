@@ -7,7 +7,10 @@ export class CredentialService {
     constructor(private userRepository: Repository<User>) {}
     async findUserByEmail(email: string) {
         try {
-            return await this.userRepository.findOne({ where: { email } })
+            return await this.userRepository.findOne({
+                where: { email },
+                select: ['password'],
+            })
         } catch {
             const err = createHttpError(
                 500,

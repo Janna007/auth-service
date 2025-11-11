@@ -17,8 +17,13 @@ export class UserController {
                 return res.status(400).json({ errors: result.array() })
             }
 
-            const { firstName, lastName, email, password } = req.body
-            // const tenantId=req.params.id
+            const { firstName, lastName, email, password, tenantId } = req.body
+
+            if (!tenantId) {
+                const error = createHttpError(400, 'tenant id is invalid')
+                next(error)
+                return
+            }
 
             const userCreated = await this.userService.createUser({
                 firstName,
@@ -26,6 +31,7 @@ export class UserController {
                 email,
                 password,
                 role: roles.MANAGER,
+                tenantId,
             })
 
             res.status(201).json({ id: userCreated.id })
@@ -52,7 +58,13 @@ export class UserController {
                 return
             }
 
-            const { firstName, lastName, email, password } = req.body
+            const { firstName, lastName, email, password, tenantId } = req.body
+
+            if (!tenantId) {
+                const error = createHttpError(400, 'tenant id is invalid')
+                next(error)
+                return
+            }
 
             await this.userService.updateUser(
                 {
@@ -61,6 +73,7 @@ export class UserController {
                     email,
                     password,
                     role: roles.MANAGER,
+                    tenantId,
                 },
                 Number(userId),
             )

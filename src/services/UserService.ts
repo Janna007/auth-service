@@ -6,7 +6,14 @@ import bcrypt from 'bcrypt'
 
 export class UserService {
     constructor(private userRepository: Repository<User>) {}
-    async createUser({ firstName, lastName, email, password, role }: UserData) {
+    async createUser({
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        tenantId,
+    }: UserData) {
         const userExist = await this.userRepository.findOne({
             where: { email: email },
         })
@@ -24,6 +31,7 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role,
+                tenant: tenantId ? { id: tenantId } : null,
             })
         } catch {
             const error = createHttpError(
@@ -64,6 +72,7 @@ export class UserService {
 
             const users = await queryBuilder
                 .orderBy('user.id')
+                .leftJoinAndSelect('user.tenant', 'tenant')
                 .skip((page - 1) * perPage)
                 .take(perPage)
                 .getManyAndCount()
@@ -79,7 +88,7 @@ export class UserService {
     }
 
     async updateUser(
-        { firstName, lastName, email, password, role }: UserData,
+        { firstName, lastName, email, password, role, tenantId }: UserData,
         userId: number,
     ) {
         const userExist = await this.userRepository.findOne({
@@ -100,6 +109,7 @@ export class UserService {
                 email,
                 password: hashedPassword,
                 role,
+                tenant: tenantId ? { id: tenantId } : null,
             })
         } catch {
             const error = createHttpError(500, 'Error while updating data')
@@ -108,6 +118,7 @@ export class UserService {
     }
 
     async deleteUSer(userId: number) {
+        console.log(userId)
         try {
             return await this.userRepository.delete(userId)
         } catch {
