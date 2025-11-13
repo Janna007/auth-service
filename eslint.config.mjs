@@ -23,7 +23,8 @@ export default tseslint.config(
             'jest.config.js',
             'tsconfig.json',
             'scripts',
-             'tests',
+            'tests',
+            'coverage',
         ],
     },
 )

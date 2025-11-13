@@ -185,8 +185,8 @@ describe('POST /auth/register', () => {
             //     'refresh_token=jannakondeth; Max-Age=31536000; Domain=localhost; Path=/; Expires=Wed, 04 Nov 2026 11:00:28 GMT; HttpOnly; SameSite=Strict'
             //   ],
 
-            let accessToken = null
-            let refreshToken = null
+            let accessToken: string | null = null
+            let refreshToken: string | null = null
 
             // expect(response.headers).toHaveProperty('set-cookie');
 
