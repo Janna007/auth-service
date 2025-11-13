@@ -32,12 +32,8 @@ router.patch(
         tenantController.updateTenant(req, res, next),
 )
 
-router.get(
-    '/all-tenants',
-    authenticate,
-    canAccess([roles.ADMIN]),
-    (req: Request, res: Response, next: NextFunction) =>
-        tenantController.getAllTenants(req, res, next),
+router.get('/all-tenants', (req: Request, res: Response, next: NextFunction) =>
+    tenantController.getAllTenants(req, res, next),
 )
 
 router.get(
