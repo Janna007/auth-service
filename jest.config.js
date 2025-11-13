@@ -10,13 +10,9 @@ module.exports = {
         ...tsJestTransformCfg,
     },
     verbose: true,
-    collectCoverage:true,
-    coverageProvider:"v8",
-    collectCoverageFrom:[
-        "src/**/*.ts",
-        "!tests/**",
-        "!**/node_modules/**"
-    ]
+    collectCoverage: true,
+    coverageProvider: 'v8',
+    collectCoverageFrom: ['src/**/*.ts', '!tests/**', '!**/node_modules/**'],
     // transformIgnorePatterns: [
     //     'node_modules/(?!(mock-jwks|until-async)/)', // 👈 allow transforming ESM deps
     //   ],
