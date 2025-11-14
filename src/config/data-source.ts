@@ -10,6 +10,12 @@ export const AppDataSource = new DataSource({
     password: Config.DB_PASSWORD ?? '',
     database: Config.DB_NAME ?? '',
 
+    ssl: { rejectUnauthorized: false },
+
+    extra: {
+        family: 4, // 👈 Force IPv4
+    },
+
     //dont use in production
     synchronize: false,
     logging: false,
