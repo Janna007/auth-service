@@ -9,12 +9,20 @@ export const AppDataSource = new DataSource({
     username: Config.DB_USERNAME ?? '',
     password: Config.DB_PASSWORD ?? '',
     database: Config.DB_NAME ?? '',
-    ssl: { rejectUnauthorized: false },
-    extra: {
-        pool_mode: 'session', // Required by Neon/pgBouncer
-        family: 4, // 👈 Force IPv4
-    },
+    // ✅ SSL only enabled in CI (Supabase)
+    ssl: Config.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
 
+    // ✅ Pool mode only for Supabase CI
+    extra: {
+        ...(Config.DB_POOL_MODE !== 'none' && {
+            pool_mode: Config.DB_POOL_MODE,
+        }),
+
+        // Force IPv4 if needed
+        ...(Config.DB_FAMILY && {
+            family: Number(Config.DB_FAMILY),
+        }),
+    },
     //dont use in production
     synchronize: false,
     logging: false,
