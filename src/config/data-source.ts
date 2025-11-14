@@ -9,10 +9,9 @@ export const AppDataSource = new DataSource({
     username: Config.DB_USERNAME ?? '',
     password: Config.DB_PASSWORD ?? '',
     database: Config.DB_NAME ?? '',
-
     ssl: { rejectUnauthorized: false },
-
     extra: {
+        pool_mode: 'session', // Required by Neon/pgBouncer
         family: 4, // 👈 Force IPv4
     },
 
