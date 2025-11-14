@@ -18,10 +18,11 @@ export class TokenService {
             // privateKey = fs.readFileSync(
             //     path.join(__dirname, '../../certs/private.pem'),
             // )
-            privateKey = Config.PRIVATE_KEY
+            privateKey = Config.PRIVATE_KEY.replace(/\\n/g, '\n')
+
+            // console.log("privatekey",privateKey)
         } catch {
             const err = createHttpError(500, 'error while reading private key')
-
             throw err
         }
 
@@ -30,6 +31,8 @@ export class TokenService {
             expiresIn: '1hr',
             issuer: 'auth-service',
         })
+
+        // console.log("accessToken",accessToken)
 
         return accessToken
     }
