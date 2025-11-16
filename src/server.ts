@@ -1,5 +1,4 @@
 'use strict'
-import createHttpError from 'http-errors'
 import app from './app'
 import { Config } from './config'
 import { AppDataSource } from './config/data-source'
@@ -20,31 +19,21 @@ const adminUserCreate = async () => {
         const user = await userRepository.findOne({
             where: { email: adminEmail },
         })
-
         if (user) {
             logger.info('admin with this email already created', {
                 email: user.email,
             })
             return
         }
-
         const saltRounds = 10
         const hashedPassword = await bcrypt.hash(adminPassword, saltRounds)
-        try {
-            return await userRepository.save({
-                firstName: adminFirstName,
-                lastName: adminLastName,
-                email: adminEmail,
-                password: hashedPassword,
-                role: roles.ADMIN,
-            })
-        } catch {
-            const error = createHttpError(
-                500,
-                'Error while saving data to the database',
-            )
-            throw error
-        }
+        return await userRepository.save({
+            firstName: adminFirstName,
+            lastName: adminLastName,
+            email: adminEmail,
+            password: hashedPassword,
+            role: roles.ADMIN,
+        })
     } catch (error) {
         console.log(error)
         return
