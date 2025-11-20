@@ -7,9 +7,17 @@ import { HttpError } from 'http-errors'
 import cookieParser from 'cookie-parser'
 import tenantRouter from './routes/tenant'
 import userRouter from './routes/user'
+import cors from 'cors'
+import { Config } from './config'
 
 const app = express()
 
+app.use(
+    cors({
+        origin: Config.CORS_ORIGIN,
+        credentials: true,
+    }),
+)
 app.use(express.static('public', { dotfiles: 'allow' }))
 app.use(cookieParser())
 app.use(express.json())
