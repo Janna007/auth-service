@@ -19,6 +19,7 @@ const {
     DB_SSL,
     DB_POOL_MODE,
     DB_FAMILY,
+    CORS_ORIGIN,
 } = process.env
 
 export const Config = {
@@ -35,4 +36,5 @@ export const Config = {
     DB_SSL,
     DB_POOL_MODE,
     DB_FAMILY,
+    CORS_ORIGIN,
 }
